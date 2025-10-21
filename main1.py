@@ -12,7 +12,7 @@ driver = Driver(uc=True)
 # Open login page first
 driver.get("https://www.x.com/login")
 time.sleep(2)  # wait for page to load
-private_folder = os.path.join("Cookie")
+private_folder = os.path.join("private_data", "Cookie")
 cookies_file = os.path.join(private_folder, "cookie1.json")
 # Load cookies from JSON
 with open(cookies_file, "r") as f:
