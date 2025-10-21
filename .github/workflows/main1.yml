@@ -14,22 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 🟩 Step 1: Checkout your public repo (main code)
+      # 1️⃣ Checkout public repo (vath414X)
       - name: Checkout public repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
 
-      # 🔒 Step 2: Checkout your private repo (cookies)
-      - name: Checkout private repository
+      # 2️⃣ Checkout private repo (Cookies)
+      - name: Checkout private repo (Cookies)
         uses: actions/checkout@v4
         with:
-          repository: vath414/Cookies   # ← change this to your real private repo name
-          token: ${{ secrets.Cookies }}
-          path: Cookie                           # folder where cookies will be stored
+          repository: vath414/Cookies   # <- replace yourusername with your GitHub username
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          path: private_data                  # folder in workflow runner
 
-      # ⚙️ Step 3: Cache pip packages
+      # 3️⃣ Cache pip packages
       - name: Cache pip packages
         uses: actions/cache@v3
         with:
@@ -38,18 +38,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # 🐍 Step 4: Set up Python
+      # 4️⃣ Setup Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 📦 Step 5: Install dependencies
+      # 5️⃣ Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install seleniumbase undetected-chromedriver requests
 
-      # 🤖 Step 6: Run SeleniumBase script
+      # 6️⃣ Run SeleniumBase script
       - name: Run SeleniumBase script
         run: python main1.py
