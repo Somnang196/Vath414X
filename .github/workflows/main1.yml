@@ -25,7 +25,7 @@ jobs:
       - name: Checkout private repository
         uses: actions/checkout@v4
         with:
-          repository: Vath414/Cookies   # ← change this to your real private repo name
+          repository: vath414/Cookies   # ← change this to your real private repo name
           token: ${{ secrets.Cookies }}
           path: Cookie                           # folder where cookies will be stored
 
