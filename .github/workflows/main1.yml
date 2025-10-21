@@ -25,9 +25,9 @@ jobs:
       - name: Checkout private repo (Cookies)
         uses: actions/checkout@v4
         with:
-          repository: vath414/Cookies   # <- replace yourusername with your GitHub username
+          repository: vath414/cookies # <- replace yourusername with your GitHub username
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
-          path: private_data                  # folder in workflow runner
+          path: private_data # folder in workflow runner
 
       # 3️⃣ Cache pip packages
       - name: Cache pip packages
