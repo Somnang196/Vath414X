@@ -1,0 +1,92 @@
+from seleniumbase import Driver
+import json
+import time
+import random
+import os
+
+# ===== Settings =====
+SCROLL_SPEED = 10   # pixels per step (lower = slower & smoother)
+RUN_TIME = 100      # total scroll duration
+LOOPS = 5           # number of processing cycles per account
+
+
+# ===== Setup Browser =====
+def setup(cookie_name):
+    """Create a browser and load cookies for the given account"""
+    driver = Driver(uc=True)
+    driver.get("https://www.x.com/login")
+    time.sleep(2)
+
+    cookies_file = os.path.join("private_data", f"{cookie_name}.json")
+
+    with open(cookies_file, "r") as f:
+        cookies = json.load(f)
+
+    for cookie in cookies:
+        cookie.pop("sameSite", None)
+        cookie.pop("expiry", None)
+        driver.add_cookie(cookie)
+
+    driver.get("https://www.x.com")
+    time.sleep(20)
+    return driver
+
+
+# ===== Smooth Scrolling =====
+def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
+    print("🌀 Scrolling...")
+    start = time.time()
+    y = 0
+    while time.time() - start < duration:
+        y += step
+        driver.execute_script(f"window.scrollTo(0, {y});")
+        time.sleep(random.uniform(0.05, 0.1))
+    print("🎯 Done scrolling.")
+
+
+# ===== Like Post =====
+def like(driver):
+    try:
+        like_buttons = driver.find_elements('[data-testid="like"]')
+        if like_buttons:
+            like_buttons[0].click()
+            print("❤️ Liked")
+        else:
+            print("⚠️ No like buttons found")
+    except Exception as e:
+        print("❌ Like failed:", e)
+
+
+# ===== Retweet Post =====
+def retweet(driver):
+    try:
+        retweet_buttons = driver.find_elements('[data-testid="retweet"]')
+        if retweet_buttons:
+            retweet_buttons[0].click()
+            time.sleep(2)
+            driver.click_if_visible('//*[text()="Repost"]')
+            print("🔁 Retweeted")
+        else:
+            print("⚠️ No retweet buttons found")
+    except Exception as e:
+        print("❌ Retweet failed:", e)
+
+
+# ===== Full Process =====
+def process(driver, loops=LOOPS):
+    """Performs like, retweet, scroll, and refresh repeatedly"""
+    for i in range(loops):
+        print(f"\n--- Cycle {i + 1}/{loops} ---")
+        time.sleep(10)
+        driver.execute_script("window.scrollBy(0, 270);")
+        time.sleep(2)
+        like(driver)
+        time.sleep(1)
+        retweet(driver)
+        time.sleep(2)
+        smooth_scroll(driver)
+        time.sleep(4)
+        driver.refresh()
+    print("✅ Done processing")
+    time.sleep(5)
+    driver.quit()
