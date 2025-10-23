@@ -70,6 +70,22 @@ def retweet(driver):
             print("⚠️ No retweet buttons found")
     except Exception as e:
         print("❌ Retweet failed:", e)
+def Getstart(driver):
+    with open("start.txt","r") as f:
+        url=f.readlines()
+    for i in url:
+        smooth_scroll(driver)
+        driver.get(i.strip())
+        time.sleep(5)
+        try:
+            follow_button = driver.find_element('[data-testid$="-follow"]')
+            follow_button.click()
+            print("✅ Follow button clicked!")
+        except Exception as e:
+            print("❌ Could not click Follow:", e)
+        driver.go_back()
+        time.sleep(3)
+    print("✅ Done following")
 
 
 # ===== Full Process =====
