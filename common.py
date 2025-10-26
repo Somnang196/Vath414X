@@ -128,7 +128,7 @@ def post(driver):
         print("✅ Posted successfully!")
 
             # Wait after posting
-        time.sleep(10)
+        time.sleep(100)
     except Exception as e:
         print("❌ Error while posting:", e)
     driver.quit()
