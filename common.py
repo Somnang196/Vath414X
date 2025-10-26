@@ -121,13 +121,16 @@ def post(driver):
             # 3️⃣ Upload video
         driver.send_keys('input[type="file"]', file_path)
         print("Uploading video...")
-        time.sleep(25)  # wait for upload to finish
+        time.sleep(100)  # wait for upload to finish
 
             # Click Post button
-        driver.click("//span[text()='Post' or text()='Tweet']", timeout=10)
+        try:
+    # Try normal click first
+            driver.click("//span[text()='Post' or text()='Tweet']")
+        except Exception:
+    # Fallback: use JS click if overlay still intercepts it
+            driver.js_click("//span[text()='Post' or text()='Tweet']")
         print("✅ Posted successfully!")
-
-            # Wait after posting
         time.sleep(100)
     except Exception as e:
         print("❌ Error while posting:", e)
