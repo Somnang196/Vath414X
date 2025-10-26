@@ -1,5 +1,5 @@
-from common import setup,process
+from common import setup,post
 if __name__ == "__main__":
     driver=setup("cookie1")
-    process(driver)
+    post(driver)
     #18+movies

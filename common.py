@@ -3,11 +3,13 @@ import json
 import time
 import random
 import os
+from upload_log import upload
 
 # ===== Settings =====
 SCROLL_SPEED = 10   # pixels per step (lower = slower & smoother)
 RUN_TIME = 100      # total scroll duration
-LOOPS = 5           # number of processing cycles per account
+LOOPS = 5   
+Gif="gif"        # number of processing cycles per account
 
 
 # ===== Setup Browser =====
@@ -86,8 +88,50 @@ def Getstart(driver):
         driver.go_back()
         time.sleep(3)
     print("✅ Done following")
+def check():
+    videos = sorted(os.listdir(Gif))
+    videos = [v for v in videos if v.endswith(".mp4")]
+    for video in videos:
+        if video in upload:
+            print(f"Skipping already uploaded video: {video}")
+        else:
+            upload.append(video)
+            with open("upload_log.py", "w") as f:
+                f.write(f"upload = {upload}\n")
+            return video
+    print("All are upload")
+    return None
+def post(driver):
+    video=check()
+    if video is None:
+        driver.quit()
+        return
+    file_path = os.path.abspath(os.path.join(Gif, video))
+    time.sleep(3)
+    try:
+            # 1️⃣ Open compose window
+        driver.get("https://x.com/compose/tweet")
+        time.sleep(5)
 
+            # 2️⃣ Type caption
+        driver.type('[aria-label="Post text"]', "Chudai..\n #nsfw #sex #porn #naked #nudes #hentai #squirt #pussy #goon")
+        time.sleep(1)
+        print("tittle completed")
+            # 2️⃣ Type caption
+            # 3️⃣ Upload video
+        driver.send_keys('input[type="file"]', file_path)
+        print("Uploading video...")
+        time.sleep(25)  # wait for upload to finish
 
+            # Click Post button
+        driver.click("//span[text()='Post' or text()='Tweet']", timeout=10)
+        print("✅ Posted successfully!")
+
+            # Wait after posting
+        time.sleep(10)
+    except Exception as e:
+        print("❌ Error while posting:", e)
+    driver.quit()
 # ===== Full Process =====
 def process(driver, loops=LOOPS):
     """Performs like, retweet, scroll, and refresh repeatedly"""
