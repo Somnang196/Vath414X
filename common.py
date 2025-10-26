@@ -99,7 +99,11 @@ def check():
             with open("upload_log.py", "w") as f:
                 f.write(f"upload = {upload}\n")
             return video
-    print("All are upload")
+    #reset upload_log
+    upload = []
+    with open("upload_log.py", "w") as f:
+        f.write(f"upload = {upload}\n")
+    print("All videos were uploaded. Resetting upload log.")
     return None
 def post(driver):
     video=check()
@@ -131,7 +135,7 @@ def post(driver):
     # Fallback: use JS click if overlay still intercepts it
             driver.js_click("//span[text()='Post' or text()='Tweet']")
         print("✅ Posted successfully!")
-        time.sleep(100)
+        time.sleep(10)
     except Exception as e:
         print("❌ Error while posting:", e)
     driver.quit()
