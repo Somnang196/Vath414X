@@ -89,6 +89,7 @@ def Getstart(driver):
         time.sleep(3)
     print("✅ Done following")
 def check():
+    global upload
     videos = sorted(os.listdir(Gif))
     videos = [v for v in videos if v.endswith(".mp4")]
     for video in videos:
