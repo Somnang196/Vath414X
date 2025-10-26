@@ -3,7 +3,6 @@ import json
 import time
 import random
 import os
-from upload_log import upload
 
 # ===== Settings =====
 SCROLL_SPEED = 10   # pixels per step (lower = slower & smoother)
@@ -89,23 +88,10 @@ def Getstart(driver):
         time.sleep(3)
     print("✅ Done following")
 def check():
-    global upload
     videos = sorted(os.listdir(Gif))
     videos = [v for v in videos if v.endswith(".mp4")]
-    for video in videos:
-        if video in upload:
-            print(f"Skipping already uploaded video: {video}")
-        else:
-            upload.append(video)
-            with open("upload_log.py", "w") as f:
-                f.write(f"upload = {upload}\n")
-            return video
-    #reset upload_log
-    upload = []
-    with open("upload_log.py", "w") as f:
-        f.write(f"upload = {upload}\n")
-    print("All videos were uploaded. Resetting upload log.")
-    return None
+    video=random.choice(videos)
+    return video
 def post(driver):
     video=check()
     if video is None:
