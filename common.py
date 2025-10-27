@@ -103,16 +103,27 @@ def post(driver):
         driver.get("https://x.com/compose/tweet")
         time.sleep(5)
         try:
-            # 1️⃣ Open audience chooser
+            driver.scroll_to('button[aria-label="Choose audience"]')
+            driver.wait_for_element_clickable('button[aria-label="Choose audience"]', timeout=10)
             driver.click('button[aria-label="Choose audience"]')
-            time.sleep(1)  # wait for dropdown
-            print
+        except Exception:
+            driver.js_click('button[aria-label="Choose audience"]')
+        time.sleep(1)  # wait for dropdown
 
-            # 2️⃣ Select a community by index
-            driver.click(f"(//div[@role='menuitem'])[1]")
-            time.sleep(1)
+        # 5️⃣ Select a random community (or first if you want fixed)
+        try:
+            driver.wait_for_element_visible("//div[@role='menuitem']", timeout=10)
+            communities = driver.find_elements("//div[@role='menuitem']")
+            if len(communities) > 0:
+                rand_index = random.randint(1, len(communities))  # 1-based XPath
+                driver.click(f"(//div[@role='menuitem'])[{rand_index}]")
+                print(f"✅ Selected community index {rand_index}")
+            else:
+                print("⚠️ No communities found, posting to Everyone")
         except Exception as e:
-            print(e)
+            print("❌ Error while selecting community:", e)
+        time.sleep(1)
+
             # 2️⃣ Type caption
         driver.type('[aria-label="Post text"]', "Chudai..\n #nsfw #sex #porn #naked #nudes #hentai #squirt #pussy #goon")
         time.sleep(1)
