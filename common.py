@@ -106,9 +106,10 @@ def post(driver):
             # 1️⃣ Open audience chooser
             driver.click('button[aria-label="Choose audience"]')
             time.sleep(1)  # wait for dropdown
+            print
 
             # 2️⃣ Select a community by index
-            driver.click(f"(//div[@role='menuitem'])[0]")
+            driver.click(f"(//div[@role='menuitem'])[1]")
             time.sleep(1)
         except Exception as e:
             print(e)
