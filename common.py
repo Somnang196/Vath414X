@@ -102,7 +102,16 @@ def post(driver):
             # 1️⃣ Open compose window
         driver.get("https://x.com/compose/tweet")
         time.sleep(5)
+        try:
+            # 1️⃣ Open audience chooser
+            driver.click('button[aria-label="Choose audience"]')
+            time.sleep(1)  # wait for dropdown
 
+            # 2️⃣ Select a community by index
+            driver.click(f"(//div[@role='menuitem'])[0]")
+            time.sleep(1)
+        except Exception as e:
+            print(e)
             # 2️⃣ Type caption
         driver.type('[aria-label="Post text"]', "Chudai..\n #nsfw #sex #porn #naked #nudes #hentai #squirt #pussy #goon")
         time.sleep(1)
