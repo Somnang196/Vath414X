@@ -19,7 +19,6 @@ def setup(cookie_name):
     time.sleep(2)
 
     cookies_file = os.path.join("private_data", f"{cookie_name}.json")
-
     with open(cookies_file, "r") as f:
         cookies = json.load(f)
 
