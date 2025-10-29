@@ -18,7 +18,8 @@ def setup(cookie_name):
     driver.get("https://www.x.com/login")
     time.sleep(2)
 
-    cookies_file = os.path.join("private_data", f"{cookie_name}.json")
+    #cookies_file = os.path.join("private_data", f"{cookie_name}.json")
+    cookies_file = os.path.join(f"{cookie_name}.json")
     with open(cookies_file, "r") as f:
         cookies = json.load(f)
 
@@ -103,27 +104,12 @@ def post(driver):
         driver.get("https://x.com/compose/tweet")
         time.sleep(5)
         try:
-            driver.scroll_to('button[aria-label="Choose audience"]')
-            driver.wait_for_element_clickable('button[aria-label="Choose audience"]', timeout=10)
-            driver.click('button[aria-label="Choose audience"]')
-        except Exception:
-            driver.js_click('button[aria-label="Choose audience"]')
-        time.sleep(1)  # wait for dropdown
-
-        # 5️⃣ Select a random community (or first if you want fixed)
-        try:
-            driver.wait_for_element_visible("//div[@role='menuitem']", timeout=10)
-            communities = driver.find_elements("//div[@role='menuitem']")
-            if len(communities) > 0:
-                rand_index = random.randint(1, len(communities))  # 1-based XPath
-                driver.click(f"(//div[@role='menuitem'])[{rand_index}]")
-                print(f"✅ Selected community index {rand_index}")
-            else:
-                print("⚠️ No communities found, posting to Everyone")
-        except Exception as e:
-            print("❌ Error while selecting community:", e)
-        time.sleep(1)
-
+            driver.click("//button[@aria-label='Choose audience']")
+            driver.click("(//div[@role='menu']//span)[1]")
+            time.sleep(1)
+            # Wait for dropdown options to appea
+        except Exception as e: 
+            print(e)
             # 2️⃣ Type caption
         driver.type('[aria-label="Post text"]', "Chudai..\n #nsfw #sex #porn #naked #nudes #hentai #squirt #pussy #goon")
         time.sleep(1)
