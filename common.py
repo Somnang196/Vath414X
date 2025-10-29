@@ -18,8 +18,8 @@ def setup(cookie_name):
     driver.get("https://www.x.com/login")
     time.sleep(2)
 
-    #cookies_file = os.path.join("private_data", f"{cookie_name}.json")
-    cookies_file = os.path.join(f"{cookie_name}.json")
+    cookies_file = os.path.join("private_data", f"{cookie_name}.json")
+    # cookies_file = os.path.join(f"{cookie_name}.json")
     with open(cookies_file, "r") as f:
         cookies = json.load(f)
 
