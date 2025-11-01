@@ -1,0 +1,53 @@
+name: X6
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2,8,14 * * *"
+permissions:
+  contents: write
+
+jobs:
+  run-seleniumbase:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout public repo (vath414X)
+      - name: Checkout public repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      # 2️⃣ Checkout private repo (Cookies)
+      - name: Checkout private repo (Cookies)
+        uses: actions/checkout@v4
+        with:
+          repository: vath414/cookies # <- replace yourusername with your GitHub username
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          path: private_data # folder in workflow runner
+
+      # 3️⃣ Cache pip packages
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # 4️⃣ Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 5️⃣ Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install seleniumbase undetected-chromedriver requests
+
+      # 6️⃣ Run SeleniumBase script
+      - name: Run SeleniumBase script
+        run: python main6.py
