@@ -61,16 +61,24 @@ def like(driver):
 # ===== Retweet Post =====
 def retweet(driver):
     try:
-        retweet_buttons = driver.find_elements('[data-testid="retweet"]')
-        if retweet_buttons:
-            retweet_buttons[0].click()
-            time.sleep(2)
-            driver.click_if_visible('//*[text()="Repost"]')
-            print("🔁 Retweeted")
-        else:
-            print("⚠️ No retweet buttons found")
+        # retweet button on tweet page
+        driver.wait_for_element('[data-testid="retweet"]', timeout=10)
+        driver.click('[data-testid="retweet"]')
+        time.sleep(1)
+
+        # confirm repost
+        driver.wait_for_element('[data-testid="retweetConfirm"]', timeout=10)
+        driver.click('[data-testid="retweetConfirm"]')
+
+        print("🔁 Retweeted")
+        time.sleep(2)
+
     except Exception as e:
         print("❌ Retweet failed:", e)
+def retweet_url(driver, url):
+    driver.get(url)
+    time.sleep(5)
+    retweet(driver)
 def Getstart(driver):
     with open("start.txt","r") as f:
         url=f.readlines()
