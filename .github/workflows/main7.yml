@@ -51,3 +51,10 @@ jobs:
       # 6️⃣ Run SeleniumBase script
       - name: Run SeleniumBase script
         run: python main7.py
+
+      # 7️⃣ Upload screenshots
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshot
+          path: debug.png
