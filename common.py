@@ -143,11 +143,10 @@ def retweet_to_community(driver, community_name):
 
         # optional comment (random)
         try:
-            if random.random() < 0.5:
-                driver.wait_for_element('[data-testid="tweetTextarea_0"]', timeout=5)
-                human_sleep("tiny")
-                driver.type('[data-testid="tweetTextarea_0"]', "Nice 🔥")
-                human_sleep("short")
+            driver.wait_for_element('[data-testid="tweetTextarea_0"]', timeout=5)
+            human_sleep("tiny")
+            driver.type('[data-testid="tweetTextarea_0"]', "Nice 🔥")
+            human_sleep("short")
         except:
             pass
 
