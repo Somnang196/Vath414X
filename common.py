@@ -143,14 +143,37 @@ def retweet_to_community(driver, community_name):
 
         # optional comment (random)
         try:
-            driver.wait_for_element('[data-testid="tweetTextarea_0"]', timeout=5)
-            human_sleep("tiny")
-            driver.type('[data-testid="tweetTextarea_0"]', "Nice 🔥")
-            human_sleep("short")
-        except:
-            pass
+            print("STEP 1: Waiting for textarea...")
+            driver.wait_for_element_visible(
+                '[data-testid^="tweetTextarea"]',
+                timeout=10
+            )
+            print("✔ STEP 1 PASSED")
 
-        # post
+            print("STEP 2: Clicking textarea...")
+            driver.click('[data-testid^="tweetTextarea"]')
+            print("✔ STEP 2 PASSED")
+
+            human_sleep("tiny")
+
+            print("STEP 3: Typing text...")
+            driver.type(
+                '[data-testid^="tweetTextarea"]',
+                "Nice 🔥",
+                delay=0.06
+            )
+            print("✔ STEP 3 PASSED")
+
+            human_sleep("short")
+
+            print("STEP 4: Checking typed value...")
+            typed_text = driver.get_text('[data-testid^="tweetTextarea"]')
+            print("TEXT FOUND:", repr(typed_text))
+
+        except Exception as e:
+            print("❌ ERROR OCCURRED:", e)
+
+                # post
         try:
             driver.wait_for_element('[data-testid="tweetButton"]', timeout=5)
             human_sleep("tiny")
