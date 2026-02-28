@@ -101,53 +101,74 @@ def GotoProfile(driver):
 # ===== Retweet Post =====
 def retweet_to_community(driver, community_name):
     try:
-        # retweet button
+        # open retweet menu
         if not driver.is_element_present('[data-testid="retweet"]'):
             print("⚠️ No retweet button")
             return False
 
         human_sleep("tiny")
         driver.click('[data-testid="retweet"]')
-        human_sleep("short")
+        human_sleep("tiny")
 
-        # quote option
-        if not driver.is_element_present('[data-testid="quoteTweet"]'):
-            print("⚠️ Quote option missing — skip")
+        # click Quote (fixed selector)
+        try:
+            driver.wait_for_element("//a[@role='menuitem']//span[contains(text(),'Quote')]", timeout=5)
+            driver.click("//a[@role='menuitem']//span[contains(text(),'Quote')]")
+        except Exception:
+            print("⚠️ Quote option missing")
             driver.press_keys("body", "ESC")
             return False
 
-        driver.click('[data-testid="quoteTweet"]')
         human_sleep("mid")
 
         # audience selector
-        if not driver.is_element_present('[aria-label="Choose audience"]'):
+        try:
+            driver.wait_for_element('[aria-label="Choose audience"]', timeout=5)
+            driver.click('[aria-label="Choose audience"]')
+            human_sleep("short")
+        except Exception:
             print("⚠️ Audience selector missing")
             driver.press_keys("body", "ESC")
             return False
 
-        driver.click('[aria-label="Choose audience"]')
-        human_sleep("short")
-
-        # community selection
-        if not driver.is_element_present(f"//span[text()='{community_name}']"):
+        # select community
+        try:
+            driver.wait_for_element(f"//span[contains(text(),'{community_name}')]", timeout=6)
+            driver.click(f"//span[contains(text(),'{community_name}')]")
+            human_sleep("short")
+        except Exception:
             print("⚠️ Community not found")
             driver.press_keys("body", "ESC")
             return False
 
-        driver.click(f"//span[text()='{community_name}']")
-        human_sleep("short")
+        # optional comment (random)
+        try:
+            if random.random() < 0.5:
+                driver.wait_for_element('[data-testid="tweetTextarea_0"]', timeout=5)
+                human_sleep("tiny")
+                driver.type('[data-testid="tweetTextarea_0"]', "Nice 🔥")
+                human_sleep("short")
+        except:
+            pass
 
-        # post button
-        if not driver.is_element_present('[data-testid="tweetButtonInline"]'):
-            print("⚠️ Post button missing")
+        # post
+        try:
+            driver.wait_for_element('[data-testid="tweetButton"]', timeout=5)
+            human_sleep("tiny")
+
+            try:
+                driver.click('[data-testid="tweetButton"]')
+            except:
+                driver.js_click('[data-testid="tweetButton"]')
+
+            print("✅ Shared to community")
+            human_sleep("short")
+            return True
+
+        except Exception:
+            print("⚠️ Post failed")
             driver.press_keys("body", "ESC")
             return False
-
-        driver.click('[data-testid="tweetButtonInline"]')
-        print("✅ Shared to community")
-
-        human_sleep("short")
-        return True
 
     except Exception as e:
         print("❌ Community retweet error:", e)
