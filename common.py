@@ -3,7 +3,7 @@ import json
 import time
 import random
 import os
-
+import datetime
 # ===== Settings =====
 SCROLL_SPEED = 10   # pixels per step (lower = slower & smoother)
 RUN_TIME = 100      # total scroll duration
@@ -99,7 +99,7 @@ def GotoProfile(driver):
         print("❌ Profile navigation failed:", e)
         return False
 # ===== Retweet Post =====
-def retweet_to_community(driver, community_name):
+def retweet_to_community(driver):
     try:
         # open retweet menu
         if not driver.is_element_present('[data-testid="retweet"]'):
@@ -132,6 +132,7 @@ def retweet_to_community(driver, community_name):
             return False
 
         # select community
+        community_name= CommnuityRetweet()
         try:
             driver.wait_for_element(f"//span[contains(text(),'{community_name}')]", timeout=6)
             driver.click(f"//span[contains(text(),'{community_name}')]")
@@ -158,8 +159,7 @@ def retweet_to_community(driver, community_name):
 
             print("STEP 3: Typing text...")
             driver.type(
-                 '[contenteditable="true"][role="textbox"]',
-                "Nice"
+                 '[contenteditable="true"][role="textbox"]', TextRetweet()      
             )
             print("✔ STEP 3 PASSED")
 
@@ -211,6 +211,18 @@ def Getstart(driver):
         driver.go_back()
         time.sleep(3)
     print("✅ Done following")
+def TextRetweet():
+    with open("TextRetweet.txt", "r", encoding="utf-8") as f:
+        lines = [line.strip() for line in f if line.strip()]
+    if not lines:
+        return None
+    return random.choice(lines)
+def CommnuityRetweet():
+    with open("CommnuityRetweet.txt", "r", encoding="utf-8") as f:
+        lines = [line.strip() for line in f if line.strip()]
+    if not lines:
+        return None
+    return random.choice(lines)
 def check():
     videos = sorted(os.listdir(Gif))
     videos = [v for v in videos if v.endswith(".mp4")]
@@ -274,3 +286,33 @@ def process(driver, loops=LOOPS):
     print("✅ Done processing")
     time.sleep(5)
     driver.quit()
+def should_run_today(times_per_day=2, start_hour=2, end_hour=14):
+    """
+    Decide if this workflow trigger should run the main action.
+
+    times_per_day : number of sessions per day
+    start_hour    : UTC start hour (inclusive)
+    end_hour      : UTC end hour (inclusive)
+
+    Designed for cron like: */30 2-14 * * *
+    """
+
+    now = datetime.utcnow()
+    today_seed = now.strftime("%Y-%m-%d")
+
+    # Stable randomness per day
+    random.seed(today_seed)
+
+    slots = []
+
+    while len(slots) < times_per_day:
+        hour = random.randint(start_hour, end_hour)
+        minute = random.choice([0, 30])  # because cron is every 30 minutes
+        slot = (hour, minute)
+
+        if slot not in slots:
+            slots.append(slot)
+
+    print("Today's selected slots (UTC):", slots)
+
+    return (now.hour, now.minute) in slots
