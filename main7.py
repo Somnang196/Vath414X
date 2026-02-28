@@ -1,7 +1,9 @@
-from common import retweet_url, setup,smooth_scroll,post
+from common import retweet_url, setup,smooth_scroll,post,GotoProfile
 if __name__ == "__main__":
     driver=setup("cookie7")
-    retweet_url(driver, "https://x.com/Dirtymom32/status/2027378892504477842")
+    smooth_scroll(driver)
+    GotoProfile(driver)
+    retweet_url(driver,"Bokep Indo Viral")
     driver.save_screenshot("debug.png")
     driver.quit()
 #swapmom

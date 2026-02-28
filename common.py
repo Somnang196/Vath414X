@@ -10,14 +10,22 @@ RUN_TIME = 100      # total scroll duration
 LOOPS = 5   
 Gif="gif"        # number of processing cycles per account
 
+def human_sleep(mode="short"):
+    ranges = {
+        "tiny":  (0.15, 0.6),   # micro pause before/after click
+        "short": (0.8,  2.5),   # normal browsing
+        "mid":   (2.5,  6.5),   # reading a tweet
+        "long":  (8.0,  20.0),  # “distraction” / thinking
+    }
+    a, b = ranges.get(mode, ranges["short"])
+    time.sleep(random.uniform(a, b))
 
 # ===== Setup Browser =====
 def setup(cookie_name):
     """Create a browser and load cookies for the given account"""
     driver = Driver(uc=True)
     driver.get("https://www.x.com/login")
-    time.sleep(2)
-
+    human_sleep("short")
     cookies_file = os.path.join("private_data", f"{cookie_name}.json")
     # cookies_file = os.path.join(f"{cookie_name}.json")
     with open(cookies_file, "r") as f:
@@ -29,19 +37,40 @@ def setup(cookie_name):
         driver.add_cookie(cookie)
 
     driver.get("https://www.x.com")
-    time.sleep(20)
+    human_sleep("mid")
     return driver
 
 
 # ===== Smooth Scrolling =====
 def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
     print("🌀 Scrolling...")
+
+    # randomize total scroll duration per call
+    duration = random.uniform(duration * 0.6, duration * 1.4)
+
     start = time.time()
     y = 0
+
     while time.time() - start < duration:
-        y += step
+
+        # vary step (speed variation)
+        current_step = step * random.uniform(0.7, 1.3)
+        y += current_step
+
         driver.execute_script(f"window.scrollTo(0, {y});")
-        time.sleep(random.uniform(0.05, 0.1))
+
+        # micro delay between scroll steps
+        time.sleep(random.uniform(0.05, 0.12))
+
+        # ⭐ reading pause (most important)
+        if random.random() < 0.12:
+            human_sleep("mid")
+
+        # ⭐ occasional early stop (very human)
+        if random.random() < 0.03:
+            print("🛑 User stopped scrolling early")
+            break
+
     print("🎯 Done scrolling.")
 
 
@@ -56,29 +85,74 @@ def like(driver):
             print("⚠️ No like buttons found")
     except Exception as e:
         print("❌ Like failed:", e)
-
-
-# ===== Retweet Post =====
-def retweet(driver):
+def GotoProfile(driver):
     try:
-        # retweet button on tweet page
-        driver.wait_for_element('[data-testid="retweet"]', timeout=10)
+        driver.get("https://x.com/Dirtymom32")
+        print("✅ Navigated to profile")
+        human_sleep("mid")
+        smooth_scroll(driver, duration=30)
+        human_sleep("tiny")
+        driver.execute_script("window.scrollTo(0, 0);")
+        human_sleep("short")
+        return True
+    except Exception as e:
+        print("❌ Profile navigation failed:", e)
+        return False
+# ===== Retweet Post =====
+def retweet_to_community(driver, community_name):
+    try:
+        # retweet button
+        if not driver.is_element_present('[data-testid="retweet"]'):
+            print("⚠️ No retweet button")
+            return False
+
+        human_sleep("tiny")
         driver.click('[data-testid="retweet"]')
-        time.sleep(1)
+        human_sleep("short")
 
-        # confirm repost
-        driver.wait_for_element('[data-testid="retweetConfirm"]', timeout=10)
-        driver.click('[data-testid="retweetConfirm"]')
+        # quote option
+        if not driver.is_element_present('[data-testid="quoteTweet"]'):
+            print("⚠️ Quote option missing — skip")
+            driver.press_keys("body", "ESC")
+            return False
 
-        print("🔁 Retweeted")
-        time.sleep(2)
+        driver.click('[data-testid="quoteTweet"]')
+        human_sleep("mid")
+
+        # audience selector
+        if not driver.is_element_present('[aria-label="Choose audience"]'):
+            print("⚠️ Audience selector missing")
+            driver.press_keys("body", "ESC")
+            return False
+
+        driver.click('[aria-label="Choose audience"]')
+        human_sleep("short")
+
+        # community selection
+        if not driver.is_element_present(f"//span[text()='{community_name}']"):
+            print("⚠️ Community not found")
+            driver.press_keys("body", "ESC")
+            return False
+
+        driver.click(f"//span[text()='{community_name}']")
+        human_sleep("short")
+
+        # post button
+        if not driver.is_element_present('[data-testid="tweetButtonInline"]'):
+            print("⚠️ Post button missing")
+            driver.press_keys("body", "ESC")
+            return False
+
+        driver.click('[data-testid="tweetButtonInline"]')
+        print("✅ Shared to community")
+
+        human_sleep("short")
+        return True
 
     except Exception as e:
-        print("❌ Retweet failed:", e)
-def retweet_url(driver, url):
-    driver.get(url)
-    time.sleep(5)
-    retweet(driver)
+        print("❌ Community retweet error:", e)
+        driver.press_keys("body", "ESC")
+        return False
 def Getstart(driver):
     with open("start.txt","r") as f:
         url=f.readlines()
