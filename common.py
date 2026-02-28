@@ -159,8 +159,7 @@ def retweet_to_community(driver, community_name):
             print("STEP 3: Typing text...")
             driver.type(
                 '[data-testid^="tweetTextarea"]',
-                "Nice 🔥",
-                delay=0.06
+                "Nice 🔥"
             )
             print("✔ STEP 3 PASSED")
 
