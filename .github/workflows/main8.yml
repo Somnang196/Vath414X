@@ -1,4 +1,4 @@
-name: X7
+name: X8
 
 on:
   workflow_dispatch:
@@ -50,7 +50,7 @@ jobs:
 
       # 6️⃣ Run SeleniumBase script
       - name: Run SeleniumBase script
-        run: python main7.py
+        run: python main8.py
 
       # 7️⃣ Upload screenshots
       - name: Upload screenshot
