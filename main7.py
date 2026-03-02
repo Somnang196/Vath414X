@@ -27,7 +27,7 @@ if __name__ == "__main__":
             time.sleep(random.uniform(2, 5))
 
         if random.random() < 0.8:
-            retweet_to_community(driver)
+            retweet_to_community(driver,"SwapFamily5423")
 
         driver.save_screenshot("debug.png")
 
@@ -40,3 +40,4 @@ if __name__ == "__main__":
             time.sleep(random.uniform(1.5, 5))
 
     driver.quit()
+#https://x.com/SwapFamily5423

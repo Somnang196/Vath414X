@@ -99,7 +99,7 @@ def GotoProfile(driver):
         print("❌ Profile navigation failed:", e)
         return False
 # ===== Retweet Post =====
-def retweet_to_community(driver):
+def retweet_to_community(driver, account):
     try:
         # open retweet menu
         if not driver.is_element_present('[data-testid="retweet"]'):
@@ -132,7 +132,7 @@ def retweet_to_community(driver):
             return False
 
         # select community
-        community_name= CommnuityRetweet()
+        community_name= CommunityRetweet(account)
         try:
             driver.wait_for_element(f"//span[contains(text(),'{community_name}')]", timeout=6)
             driver.click(f"//span[contains(text(),'{community_name}')]")
@@ -217,12 +217,22 @@ def TextRetweet():
     if not lines:
         return None
     return random.choice(lines)
-def CommnuityRetweet():
-    with open("CommnuityRetweet.txt", "r", encoding="utf-8") as f:
-        lines = [line.strip() for line in f if line.strip()]
-    if not lines:
+def CommunityRetweet(account):
+    try:
+        with open("community_list.json", "r", encoding="utf-8") as f:
+            data = json.load(f)   # load full JSON list
+    except Exception as e:
+        print("Error loading JSON:", e)
         return None
-    return random.choice(lines)
+
+    # Find the matching account
+    for item in data:
+        if item.get("account") == account:
+            communities = item.get("community", [])
+            if communities:
+                return random.choice(communities)
+            return None
+    return None
 def check():
     videos = sorted(os.listdir(Gif))
     videos = [v for v in videos if v.endswith(".mp4")]
