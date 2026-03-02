@@ -291,23 +291,26 @@ def process(driver, loops=LOOPS):
 def should_run_today():
     now = datetime.now(timezone.utc)
 
-    # Stable daily randomness
-    random.seed(now.strftime("%Y-%m-%d"))
+    # Unique seed per workflow per day
+    workflow_name = os.environ.get("GITHUB_WORKFLOW", "default")
+    seed_value = now.strftime("%Y-%m-%d") + workflow_name
 
-    # Random number of allowed runs today (2–5)
-    max_runs_today = random.randint(2, 5)
+    random.seed(seed_value)
 
-    # Build possible 30-min slots
+    # Random 3–5 runs per day
+    runs_today = random.randint(3, 5)
+
+    # All possible 30-min slots
     possible_slots = [
         (h, m)
-        for h in range(2, 15)
+        for h in range(0, 24)
         for m in [0, 30]
     ]
 
     random.shuffle(possible_slots)
 
-    selected_slots = possible_slots[:max_runs_today]
+    selected_slots = possible_slots[:runs_today]
 
-    print("Today's selected slots:", selected_slots)
+    print(f"{workflow_name} slots:", selected_slots)
 
     return (now.hour, now.minute) in selected_slots
