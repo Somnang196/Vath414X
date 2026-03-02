@@ -288,23 +288,26 @@ def process(driver, loops=LOOPS):
     driver.quit()
 
 
-def should_run_today(times_per_day=2, start_hour=2, end_hour=14):
-
+def should_run_today():
     now = datetime.now(timezone.utc)
-    today_seed = now.strftime("%Y-%m-%d")
 
-    random.seed(today_seed)
+    # Stable daily randomness
+    random.seed(now.strftime("%Y-%m-%d"))
 
-    slots = []
+    # Random number of allowed runs today (2–5)
+    max_runs_today = random.randint(2, 5)
 
-    while len(slots) < times_per_day:
-        hour = random.randint(start_hour, end_hour)
-        minute = random.choice([0, 30])
-        slot = (hour, minute)
+    # Build possible 30-min slots
+    possible_slots = [
+        (h, m)
+        for h in range(2, 15)
+        for m in [0, 30]
+    ]
 
-        if slot not in slots:
-            slots.append(slot)
+    random.shuffle(possible_slots)
 
-    print("Today's selected slots (UTC):", slots)
+    selected_slots = possible_slots[:max_runs_today]
 
-    return (now.hour, now.minute) in slots
+    print("Today's selected slots:", selected_slots)
+
+    return (now.hour, now.minute) in selected_slots

@@ -3,9 +3,7 @@ name: X1
 on:
   workflow_dispatch:
   schedule:
-    # Runs at 9:00 AM, 1:00 PM, 7:00 PM CET (converted to UTC)
-    - cron: "0 8,12,18 * * *"
-
+    - cron: "*/30 2-14 * * *"
 permissions:
   contents: write
 
@@ -53,3 +51,10 @@ jobs:
       # 6️⃣ Run SeleniumBase script
       - name: Run SeleniumBase script
         run: python main1.py
+
+      # 7️⃣ Upload screenshots
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshot
+          path: debug.png

@@ -4,7 +4,7 @@ import random, time
 if __name__ == "__main__":
 
     # 🔥 FIRST: decide whether this trigger should run
-    if not should_run_today(times_per_day=2, start_hour=2, end_hour=14):
+    if not should_run_today():
         print("⏭ Skipping this cycle")
         exit()
 
