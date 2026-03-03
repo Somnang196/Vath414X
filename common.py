@@ -143,11 +143,20 @@ def retweet_to_community(driver, account):
         # select community
         community_name= CommunityRetweet(account)
         try:
-            driver.wait_for_element(f"//span[contains(text(),'{community_name}')]", timeout=6)
-            driver.click(f"//span[contains(text(),'{community_name}')]")
+            driver.wait_for_element(
+                f"//div[@role='menuitem']//span[contains(text(),'{community_name}')]",
+                timeout=8
+            )
+
+            driver.click(
+                f"//div[@role='menuitem'][.//span[contains(text(),'{community_name}')]]"
+            )
+            print(f"✔ Selected community: {community_name}")
             human_sleep("short")
-        except Exception:
-            print("⚠️ Community not found")
+
+        except Exception as e:
+            print("⚠️ Community not found:", e)
+            driver.save_screenshot("community_debug.png")
             driver.press_keys("body", "ESC")
             return False
 
