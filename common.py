@@ -123,31 +123,31 @@ def retweet_to_community(driver, account):
 
        # audience selector
         try:
-            # Wait for compose modal
-            driver.wait_for_element('div[role="dialog"]', timeout=8)
+            driver.wait_for_element('div[role="dialog"]', timeout=10)
             human_sleep("short")
 
-            # STEP 1 — Check if dropdown already open
-            if driver.is_element_present("//span[contains(.,'My Communities')]"):
+            # Locate the real button
+            audience_btn = 'button[aria-label="Choose audience"]'
+
+            driver.wait_for_element(audience_btn, timeout=8)
+
+            expanded = driver.get_attribute(audience_btn, "aria-expanded")
+
+            # If closed → open it
+            if expanded == "false":
+                driver.click(audience_btn)
+                human_sleep("short")
+
+            # If already open → do nothing
+            elif expanded == "true":
                 print("Audience dropdown already open")
 
-            else:
-                # STEP 2 — Try clicking 'Everyone' button
-                if driver.is_element_present("//span[text()='Everyone']"):
-                    driver.click("//span[text()='Everyone']")
-                    human_sleep("short")
-                else:
-                    print("Audience button not found")
-
-            # STEP 3 — Confirm dropdown is visible
-            driver.wait_for_element(
-                "//span[contains(.,'My Communities')]",
-                timeout=8
-            )
+            # Confirm dropdown content exists
+            driver.wait_for_element("//span[text()='My Communities']", timeout=8)
 
         except Exception as e:
             print("⚠️ Audience selector failed:", e)
-            driver.save_screenshot("audience_state_debug.png")
+            driver.save_screenshot("audience_debug.png")
             driver.press_keys("body", "ESC")
             return False
 
