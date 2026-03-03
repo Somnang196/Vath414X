@@ -122,23 +122,23 @@ def retweet_to_community(driver, account):
         human_sleep("mid")
 
        # audience selector
-        try:
-            # Case 1: Button exists (closed state)
-            if driver.is_element_present('[aria-label="Choose audience"]'):
-                driver.click('[aria-label="Choose audience"]')
-                human_sleep("short")
+        # try:
+        #     # Case 1: Button exists (closed state)
+        #     if driver.is_element_present('[aria-label="Choose audience"]'):
+        #         driver.click('[aria-label="Choose audience"]')
+        #         human_sleep("short")
 
-            # Case 2: Dropdown already open
-            elif driver.is_element_present("//span[contains(text(),'My Communities')]"):
-                print("Audience menu already open")
+        #     # Case 2: Dropdown already open
+        #     elif driver.is_element_present("//span[contains(text(),'My Communities')]"):
+        #         print("Audience menu already open")
 
-            else:
-                raise Exception("Audience UI not found")
+        #     else:
+        #         raise Exception("Audience UI not found")
 
-        except Exception:
-            print("⚠️ Audience selector missing")
-            driver.press_keys("body", "ESC")
-            return False
+        # except Exception:
+        #     print("⚠️ Audience selector missing")
+        #     driver.press_keys("body", "ESC")
+        #     return False
 
         # select community
         community_name= CommunityRetweet(account)
