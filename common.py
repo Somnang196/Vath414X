@@ -22,22 +22,42 @@ def human_sleep(mode="short"):
 
 # ===== Setup Browser =====
 def setup(cookie_name):
-    """Create a browser and load cookies for the given account"""
+    """Create browser and load cookies correctly"""
+
     driver = Driver(uc=True)
-    driver.get("https://www.x.com/login")
+
+    # Step 1: Open base domain (NOT /login)
+    driver.get("https://x.com")
     human_sleep("short")
+
+    # Step 2: Clear any existing cookies
+    driver.delete_all_cookies()
+
+    # Step 3: Load cookies
     cookies_file = os.path.join("private_data", f"{cookie_name}.json")
-    # cookies_file = os.path.join(f"{cookie_name}.json")
+
     with open(cookies_file, "r") as f:
         cookies = json.load(f)
 
     for cookie in cookies:
         cookie.pop("sameSite", None)
         cookie.pop("expiry", None)
+
+        # IMPORTANT: Force correct domain
+        cookie["domain"] = ".x.com"
+
         driver.add_cookie(cookie)
 
-    driver.get("https://www.x.com")
+    # Step 4: Refresh to activate session
+    driver.refresh()
     human_sleep("mid")
+
+    # Step 5: Validate login
+    if "login" in driver.current_url.lower() or driver.is_element_present("text=Join today"):
+        print("❌ Cookie login failed")
+    else:
+        print("✅ Cookie login successful")
+
     return driver
 
 
