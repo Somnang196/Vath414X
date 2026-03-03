@@ -1,4 +1,4 @@
-from common import retweet_to_community,work, setup, smooth_scroll, should_run_today, GotoProfile
+from common import work, setup
 import random, time
 
 if __name__ == "__main__":
