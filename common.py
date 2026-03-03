@@ -99,114 +99,9 @@ def GotoProfile(driver):
         print("❌ Profile navigation failed:", e)
         return False
 # ===== Retweet Post =====
-# def retweet_to_community(driver, account):
-#     try:
-#         # open retweet menu
-#         if not driver.is_element_present('[data-testid="retweet"]'):
-#             print("⚠️ No retweet button")
-#             return False
-
-#         human_sleep("tiny")
-#         driver.click('[data-testid="retweet"]')
-#         human_sleep("tiny")
-
-#         # click Quote (fixed selector)
-#         try:
-#             driver.wait_for_element("//a[@role='menuitem']//span[contains(text(),'Quote')]", timeout=5)
-#             driver.click("//a[@role='menuitem']//span[contains(text(),'Quote')]")
-#         except Exception:
-#             print("⚠️ Quote option missing")
-#             driver.press_keys("body", "ESC")
-#             return False
-
-#         human_sleep("mid")
-
-#        # audience selector
-#         try:
-#             # Case 1: Button exists (closed state)
-#             if driver.is_element_present('[aria-label="Choose audience"]'):
-#                 driver.click('[aria-label="Choose audience"]')
-#                 human_sleep("short")
-
-#             # Case 2: Dropdown already open
-#             elif driver.is_element_present("//span[contains(text(),'My Communities')]"):
-#                 print("Audience menu already open")
-
-#             else:
-#                 raise Exception("Audience UI not found")
-
-#         except Exception:
-#             print("⚠️ Audience selector missing")
-#             driver.press_keys("body", "ESC")
-#             return False
-
-#         # select community
-#         community_name= CommunityRetweet(account)
-#         try:
-#             driver.wait_for_element(f"//span[contains(text(),'{community_name}')]", timeout=6)
-#             driver.click(f"//span[contains(text(),'{community_name}')]")
-#             human_sleep("short")
-#         except Exception:
-#             print("⚠️ Community not found")
-#             driver.press_keys("body", "ESC")
-#             return False
-
-#         # optional comment (random)
-#         try:
-#             print("STEP 1: Waiting for textarea...")
-#             driver.wait_for_element_visible(
-#                 '[data-testid^="tweetTextarea"]',
-#                 timeout=10
-#             )
-#             print("✔ STEP 1 PASSED")
-
-#             print("STEP 2: Clicking textarea...")
-#             driver.click('[data-testid^="tweetTextarea"]')
-#             print("✔ STEP 2 PASSED")
-
-#             human_sleep("tiny")
-
-#             print("STEP 3: Typing text...")
-#             driver.type(
-#                  '[contenteditable="true"][role="textbox"]', TextRetweet()      
-#             )
-#             print("✔ STEP 3 PASSED")
-
-#             human_sleep("short")
-
-#             print("STEP 4: Checking typed value...")
-#             typed_text = driver.get_text('[data-testid^="tweetTextarea"]')
-#             print("TEXT FOUND:", repr(typed_text))
-
-#         except Exception as e:
-#             print("❌ ERROR OCCURRED:", e)
-
-#                 # post
-#         try:
-#             driver.wait_for_element('[data-testid="tweetButton"]', timeout=5)
-#             human_sleep("tiny")
-
-#             try:
-#                 driver.click('[data-testid="tweetButton"]')
-#             except:
-#                 driver.js_click('[data-testid="tweetButton"]')
-
-#             print("✅ Shared to community")
-#             human_sleep("short")
-#             return True
-
-#         except Exception:
-#             print("⚠️ Post failed")
-#             driver.press_keys("body", "ESC")
-#             return False
-
-#     except Exception as e:
-#         print("❌ Community retweet error:", e)
-#         driver.press_keys("body", "ESC")
-#         return False
 def retweet_to_community(driver, account):
     try:
-        # 1. Open retweet menu
+        # open retweet menu
         if not driver.is_element_present('[data-testid="retweet"]'):
             print("⚠️ No retweet button")
             return False
@@ -215,12 +110,10 @@ def retweet_to_community(driver, account):
         driver.click('[data-testid="retweet"]')
         human_sleep("tiny")
 
-        # 2. Click Quote (with retry)
-        quote_selector = "//div[@role='menuitem']//span[text()='Quote'] | //a[@role='menuitem']//span[contains(text(),'Quote')] | [data-testid='quote']"
+        # click Quote (fixed selector)
         try:
-            driver.wait_for_element(quote_selector, timeout=8)
-            driver.click(quote_selector)
-            print("✔ Clicked Quote")
+            driver.wait_for_element("//a[@role='menuitem']//span[contains(text(),'Quote')]", timeout=5)
+            driver.click("//a[@role='menuitem']//span[contains(text(),'Quote')]")
         except Exception:
             print("⚠️ Quote option missing")
             driver.press_keys("body", "ESC")
@@ -228,114 +121,221 @@ def retweet_to_community(driver, account):
 
         human_sleep("mid")
 
-        # 3. Wait for Modal & Audience Selector
+       # audience selector
         try:
-            # Wait for ANY modal-like element to appear
-            modal_selectors = ['[data-testid="sheetDialog"]', '[role="dialog"]', '.DraftEditor-root']
-            modal_found = False
-            for m_sel in modal_selectors:
-                if driver.is_element_present(m_sel):
-                    modal_found = True
-                    break
-            
-            if not modal_found:
-                print("⚠️ Modal not detected, attempting to proceed anyway...")
-
-            # Try to find the audience button with even more variations
-            audience_btn_selectors = [
-                '[aria-label="Choose audience"]',
-                "//div[@role='button'][.//span[text()='Everyone']]",
-                "//div[@role='button'][.//span[contains(text(), 'Everyone')]]",
-                "//div[@aria-haspopup='menu']",
-                "[data-testid='composer-audience-button']"
-            ]
-            
-            found_btn = False
-            # Try clicking the audience button up to 2 times
-            for _ in range(2):
-                for selector in audience_btn_selectors:
-                    if driver.is_element_present(selector):
-                        try:
-                            driver.click(selector)
-                            found_btn = True
-                            print(f"✔ Audience menu opened via: {selector}")
-                            break
-                        except:
-                            continue
-                if found_btn: break
+            # Case 1: Button exists (closed state)
+            if driver.is_element_present('[aria-label="Choose audience"]'):
+                driver.click('[aria-label="Choose audience"]')
                 human_sleep("short")
-            
-            if not found_btn:
-                print("⚠️ Could not open audience menu. Checking if already open...")
-                if not driver.is_element_present("//span[contains(text(),'My Communities')]"):
-                    raise Exception("Audience button not found or clickable")
-                    
-            human_sleep("short")
-        except Exception as e:
-            print(f"❌ Audience Step Failed: {e}")
-            # If we can't change audience, we might be posting to 'Everyone' by mistake
-            # Better to ESC and fail than post to the wrong place
+
+            # Case 2: Dropdown already open
+            elif driver.is_element_present("//span[contains(text(),'My Communities')]"):
+                print("Audience menu already open")
+
+            else:
+                raise Exception("Audience UI not found")
+
+        except Exception:
+            print("⚠️ Audience selector missing")
             driver.press_keys("body", "ESC")
             return False
 
-        # 4. Select community
-        community_name = CommunityRetweet(account)
+        # select community
+        community_name= CommunityRetweet(account)
         try:
-            # Very broad search for the community name
-            comm_xpath = f"//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '{community_name.lower()}')]"
-            
-            driver.wait_for_element(comm_xpath, timeout=10)
-            # Use JS click as a fallback for hidden/scrolled elements
-            target_element = driver.find_element(comm_xpath)
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
-            human_sleep("tiny")
-            try:
-                driver.click(comm_xpath)
-            except:
-                driver.js_click(comm_xpath)
-            
-            print(f"✔ Selected community: {community_name}")
+            driver.wait_for_element(f"//span[contains(text(),'{community_name}')]", timeout=6)
+            driver.click(f"//span[contains(text(),'{community_name}')]")
             human_sleep("short")
-        except Exception as e:
-            print(f"⚠️ Community '{community_name}' not found: {e}")
+        except Exception:
+            print("⚠️ Community not found")
             driver.press_keys("body", "ESC")
             return False
 
-        # 5. Type Comment
+        # optional comment (random)
         try:
-            textarea_selector = '[data-testid^="tweetTextarea"]'
-            driver.wait_for_element_visible(textarea_selector, timeout=10)
-            driver.click(textarea_selector)
+            print("STEP 1: Waiting for textarea...")
+            driver.wait_for_element_visible(
+                '[data-testid^="tweetTextarea"]',
+                timeout=10
+            )
+            print("✔ STEP 1 PASSED")
+
+            print("STEP 2: Clicking textarea...")
+            driver.click('[data-testid^="tweetTextarea"]')
+            print("✔ STEP 2 PASSED")
+
             human_sleep("tiny")
-            
-            comment_text = TextRetweet()
-            driver.type('[contenteditable="true"][role="textbox"]', comment_text)
+
+            print("STEP 3: Typing text...")
+            driver.type(
+                 '[contenteditable="true"][role="textbox"]', TextRetweet()      
+            )
+            print("✔ STEP 3 PASSED")
+
             human_sleep("short")
+
+            print("STEP 4: Checking typed value...")
+            typed_text = driver.get_text('[data-testid^="tweetTextarea"]')
+            print("TEXT FOUND:", repr(typed_text))
+
         except Exception as e:
-            print("❌ Comment error:", e)
+            print("❌ ERROR OCCURRED:", e)
 
-        # 6. Post
+                # post
         try:
-            btn_selector = '[data-testid="tweetButton"]'
-            driver.wait_for_element(btn_selector, timeout=5)
+            driver.wait_for_element('[data-testid="tweetButton"]', timeout=5)
             human_sleep("tiny")
-            try:
-                driver.click(btn_selector)
-            except:
-                driver.js_click(btn_selector)
 
-            print(f"✅ Successfully shared to: {community_name}")
+            try:
+                driver.click('[data-testid="tweetButton"]')
+            except:
+                driver.js_click('[data-testid="tweetButton"]')
+
+            print("✅ Shared to community")
             human_sleep("short")
             return True
+
         except Exception:
-            print("⚠️ Final post button failed")
+            print("⚠️ Post failed")
             driver.press_keys("body", "ESC")
             return False
 
     except Exception as e:
-        print("❌ Critical Error:", e)
+        print("❌ Community retweet error:", e)
         driver.press_keys("body", "ESC")
         return False
+# def retweet_to_community(driver, account):
+#     try:
+#         # 1. Open retweet menu
+#         if not driver.is_element_present('[data-testid="retweet"]'):
+#             print("⚠️ No retweet button")
+#             return False
+
+#         human_sleep("tiny")
+#         driver.click('[data-testid="retweet"]')
+#         human_sleep("tiny")
+
+#         # 2. Click Quote (with retry)
+#         quote_selector = "//div[@role='menuitem']//span[text()='Quote'] | //a[@role='menuitem']//span[contains(text(),'Quote')] | [data-testid='quote']"
+#         try:
+#             driver.wait_for_element(quote_selector, timeout=8)
+#             driver.click(quote_selector)
+#             print("✔ Clicked Quote")
+#         except Exception:
+#             print("⚠️ Quote option missing")
+#             driver.press_keys("body", "ESC")
+#             return False
+
+#         human_sleep("mid")
+
+#         # 3. Wait for Modal & Audience Selector
+#         try:
+#             # Wait for ANY modal-like element to appear
+#             modal_selectors = ['[data-testid="sheetDialog"]', '[role="dialog"]', '.DraftEditor-root']
+#             modal_found = False
+#             for m_sel in modal_selectors:
+#                 if driver.is_element_present(m_sel):
+#                     modal_found = True
+#                     break
+            
+#             if not modal_found:
+#                 print("⚠️ Modal not detected, attempting to proceed anyway...")
+
+#             # Try to find the audience button with even more variations
+#             audience_btn_selectors = [
+#                 '[aria-label="Choose audience"]',
+#                 "//div[@role='button'][.//span[text()='Everyone']]",
+#                 "//div[@role='button'][.//span[contains(text(), 'Everyone')]]",
+#                 "//div[@aria-haspopup='menu']",
+#                 "[data-testid='composer-audience-button']"
+#             ]
+            
+#             found_btn = False
+#             # Try clicking the audience button up to 2 times
+#             for _ in range(2):
+#                 for selector in audience_btn_selectors:
+#                     if driver.is_element_present(selector):
+#                         try:
+#                             driver.click(selector)
+#                             found_btn = True
+#                             print(f"✔ Audience menu opened via: {selector}")
+#                             break
+#                         except:
+#                             continue
+#                 if found_btn: break
+#                 human_sleep("short")
+            
+#             if not found_btn:
+#                 print("⚠️ Could not open audience menu. Checking if already open...")
+#                 if not driver.is_element_present("//span[contains(text(),'My Communities')]"):
+#                     raise Exception("Audience button not found or clickable")
+                    
+#             human_sleep("short")
+#         except Exception as e:
+#             print(f"❌ Audience Step Failed: {e}")
+#             # If we can't change audience, we might be posting to 'Everyone' by mistake
+#             # Better to ESC and fail than post to the wrong place
+#             driver.press_keys("body", "ESC")
+#             return False
+
+#         # 4. Select community
+#         community_name = CommunityRetweet(account)
+#         try:
+#             # Very broad search for the community name
+#             comm_xpath = f"//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '{community_name.lower()}')]"
+            
+#             driver.wait_for_element(comm_xpath, timeout=10)
+#             # Use JS click as a fallback for hidden/scrolled elements
+#             target_element = driver.find_element(comm_xpath)
+#             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+#             human_sleep("tiny")
+#             try:
+#                 driver.click(comm_xpath)
+#             except:
+#                 driver.js_click(comm_xpath)
+            
+#             print(f"✔ Selected community: {community_name}")
+#             human_sleep("short")
+#         except Exception as e:
+#             print(f"⚠️ Community '{community_name}' not found: {e}")
+#             driver.press_keys("body", "ESC")
+#             return False
+
+#         # 5. Type Comment
+#         try:
+#             textarea_selector = '[data-testid^="tweetTextarea"]'
+#             driver.wait_for_element_visible(textarea_selector, timeout=10)
+#             driver.click(textarea_selector)
+#             human_sleep("tiny")
+            
+#             comment_text = TextRetweet()
+#             driver.type('[contenteditable="true"][role="textbox"]', comment_text)
+#             human_sleep("short")
+#         except Exception as e:
+#             print("❌ Comment error:", e)
+
+#         # 6. Post
+#         try:
+#             btn_selector = '[data-testid="tweetButton"]'
+#             driver.wait_for_element(btn_selector, timeout=5)
+#             human_sleep("tiny")
+#             try:
+#                 driver.click(btn_selector)
+#             except:
+#                 driver.js_click(btn_selector)
+
+#             print(f"✅ Successfully shared to: {community_name}")
+#             human_sleep("short")
+#             return True
+#         except Exception:
+#             print("⚠️ Final post button failed")
+#             driver.press_keys("body", "ESC")
+#             return False
+
+#     except Exception as e:
+#         print("❌ Critical Error:", e)
+#         driver.press_keys("body", "ESC")
+#         return False
 def Getstart(driver):
     with open("start.txt","r") as f:
         url=f.readlines()
