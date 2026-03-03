@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
     # Random chance to do action inside session
     if random.random() < 0.6:
-
+        print("active session")
         scroll_times = random.randint(2, 7)
 
         for _ in range(scroll_times):
@@ -25,6 +25,7 @@ if __name__ == "__main__":
 
     else:
         # Passive session
+        print("passive session")
         scroll_times = random.randint(5, 12)
 
         for _ in range(scroll_times):
