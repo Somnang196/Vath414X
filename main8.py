@@ -2,15 +2,7 @@ from common import retweet_to_community, setup, smooth_scroll, should_run_today,
 import random, time
 
 if __name__ == "__main__":
-
-    # 🔥 FIRST: decide whether this trigger should run
-    if not should_run_today():
-        print("⏭ Skipping this cycle")
-        exit()
-
-    print("✅ Running session")
-
-    # Only setup driver if selected
+  # Only setup driver if selected
     driver = setup("cookie8")
 
     # Random chance to do action inside session

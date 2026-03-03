@@ -3,13 +3,6 @@ import random, time
 
 if __name__ == "__main__":
 
-    # 🔥 FIRST: decide whether this trigger should run
-    if not should_run_today():
-        print("⏭ Skipping this cycle")
-        exit()
-
-    print("✅ Running session")
-
     # Only setup driver if selected
     driver = setup("cookie4")
 

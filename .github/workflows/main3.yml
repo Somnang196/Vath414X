@@ -3,7 +3,12 @@ name: X3
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "33 2 * * *"
+    - cron: "12 6 * * *"
+    - cron: "44 10 * * *"
+    - cron: "7 14 * * *"
+    - cron: "58 18 * * *"
+    - cron: "26 22 * * *"
 permissions:
   contents: write
 
