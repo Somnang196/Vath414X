@@ -121,11 +121,20 @@ def retweet_to_community(driver, account):
 
         human_sleep("mid")
 
-        # audience selector
+       # audience selector
         try:
-            driver.wait_for_element('[aria-label="Choose audience"]', timeout=5)
-            driver.click('[aria-label="Choose audience"]')
-            human_sleep("short")
+            # Case 1: Button exists (closed state)
+            if driver.is_element_present('[aria-label="Choose audience"]'):
+                driver.click('[aria-label="Choose audience"]')
+                human_sleep("short")
+
+            # Case 2: Dropdown already open
+            elif driver.is_element_present("//span[contains(text(),'My Communities')]"):
+                print("Audience menu already open")
+
+            else:
+                raise Exception("Audience UI not found")
+
         except Exception:
             print("⚠️ Audience selector missing")
             driver.press_keys("body", "ESC")
