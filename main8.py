@@ -14,12 +14,12 @@ if __name__ == "__main__":
             smooth_scroll(driver)
             time.sleep(random.uniform(1.2, 4.5))
 
-        if random.random() < 0.5:
+        if random.random() < 0.9:
             GotoProfile(driver)
             time.sleep(random.uniform(2, 5))
-
-        if random.random() < 0.8:
-            retweet_to_community(driver,"swapfamily7857")
+            if random.random() < 0.8:
+                retweet_to_community(driver,"swapfamily7857")
+        
 
         driver.save_screenshot("debug.png")
 
