@@ -166,33 +166,54 @@ def retweet_to_community(driver, account):
 
        # audience selector
         try:
-            driver.wait_for_element('div[role="dialog"]', timeout=10)
-            human_sleep("short")
-
-            # Locate the real button
+            driver.wait_for_element_visible('div[role="dialog"]', timeout=10)
+            
+            # Selector for the audience toggle
             audience_btn = 'button[aria-label="Choose audience"]'
+            
+            # Check if dropdown is ALREADY open (looking for "My Communities" text)
+            if not driver.is_text_visible("My Communities"):
+                print("Opening audience dropdown...")
+                # Use js_click to bypass the "click intercepted" error
+                driver.js_click(audience_btn) 
+            else:
+                print("Audience dropdown already open, proceeding...")
 
-            driver.wait_for_element(audience_btn, timeout=8)
-
-            expanded = driver.get_attribute(audience_btn, "aria-expanded")
-
-            # If closed → open it
-            if expanded == "false":
-                driver.click(audience_btn)
-                human_sleep("short")
-
-            # If already open → do nothing
-            elif expanded == "true":
-                print("Audience dropdown already open")
-
-            # Confirm dropdown content exists
-            driver.wait_for_element("//span[text()='My Communities']", timeout=8)
+            driver.wait_for_text("My Communities", timeout=8)
 
         except Exception as e:
-            print("⚠️ Audience selector failed:", e)
-            driver.save_screenshot("audience_debug.png")
+            print(f"⚠️ Audience selector failed: {e}")
+            driver.save_screenshot("audience_error.png")
             driver.press_keys("body", "ESC")
             return False
+        # try:
+        #     driver.wait_for_element('div[role="dialog"]', timeout=10)
+        #     human_sleep("short")
+
+        #     # Locate the real button
+        #     audience_btn = 'button[aria-label="Choose audience"]'
+
+        #     driver.wait_for_element(audience_btn, timeout=8)
+
+        #     expanded = driver.get_attribute(audience_btn, "aria-expanded")
+
+        #     # If closed → open it
+        #     if expanded == "false":
+        #         driver.click(audience_btn)
+        #         human_sleep("short")
+
+        #     # If already open → do nothing
+        #     elif expanded == "true":
+        #         print("Audience dropdown already open")
+
+        #     # Confirm dropdown content exists
+        #     driver.wait_for_element("//span[text()='My Communities']", timeout=8)
+
+        # except Exception as e:
+        #     print("⚠️ Audience selector failed:", e)
+        #     driver.save_screenshot("audience_debug.png")
+        #     driver.press_keys("body", "ESC")
+        #     return False
 
         # select community
         community_name= CommunityRetweet(account)
