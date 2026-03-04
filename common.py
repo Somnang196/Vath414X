@@ -26,14 +26,12 @@ def setup(cookie_name):
 
     driver = Driver(uc=True)
 
-    # Step 1: Open base domain to set initial context for cookies
-    driver.get("https://x.com" )
+    # Open lightweight page first (less detection than homepage)
+    driver.get("https://x.com/robots.txt")
     human_sleep("short")
 
-    # Step 2: Clear any existing cookies to ensure a clean state
     driver.delete_all_cookies()
 
-    # Step 3: Load cookies from file and prepare them for Selenium
     cookies_file = os.path.join("private_data", f"{cookie_name}.json")
 
     try:
@@ -47,56 +45,43 @@ def setup(cookie_name):
         return None
 
     for cookie in cookies:
-        # Selenium expects 'expiry' as an integer timestamp, not 'expirationDate'
-        if "expirationDate" in cookie:
-            cookie["expiry"] = int(cookie["expirationDate"])
-            cookie.pop("expirationDate")
-
-        # Selenium's add_cookie only accepts 'Strict', 'Lax', or 'None' for 'sameSite'
-        # Your JSON had 'no_restriction', which is invalid for Selenium.
-        if "sameSite" in cookie and cookie["sameSite"].lower() not in ["strict", "lax", "none"]:
-            cookie.pop("sameSite")
-
-        # Remove fields not recognized by Selenium's add_cookie method
-        cookie.pop("storeId", None)
-        cookie.pop("session", None)
-        cookie.pop("hostOnly", None) # Often present in exported cookies, remove it
-
-        # IMPORTANT: Force correct domain for all cookies to .x.com
-        # This ensures consistency, as some cookies might be for 'x.com' and others for '.x.com'
-        cookie["domain"] = ".x.com"
-
         try:
-            # Corrected f-string syntax: using single quotes for the inner string 'name'
-            driver.add_cookie(cookie)
-        except Exception as e:
-            print(f"Warning: Could not add cookie {cookie.get('name', 'unknown')}: {e}")
+            clean_cookie = {
+                "name": cookie["name"],
+                "value": cookie["value"],
+                "domain": cookie.get("domain", ".x.com"),
+                "path": cookie.get("path", "/"),
+            }
 
-    # Step 4: Navigate to a known logged-in page to activate the session
-    # Refreshing might not be enough; a direct navigation to a page that requires login
-    # (like the home feed) is more effective for session activation.
-    driver.get("https://x.com/home" ) # Or another page that requires login
+            # Expiry handling
+            if "expirationDate" in cookie:
+                try:
+                    clean_cookie["expiry"] = int(cookie["expirationDate"])
+                except Exception:
+                    pass
+
+            # Safe sameSite handling
+            same_site = cookie.get("sameSite")
+            if isinstance(same_site, str) and same_site.lower() in ["strict", "lax", "none"]:
+                clean_cookie["sameSite"] = same_site.capitalize()
+
+            driver.add_cookie(clean_cookie)
+
+        except Exception as e:
+            print(f"Warning: Could not add cookie {cookie.get('name')}: {e}")
+
+    # Go to home page to activate session
+    driver.get("https://x.com/home")
     human_sleep("mid")
 
-    # Step 5: Validate login more robustly
-    # Look for elements that are *only* present when logged in, or check for login redirects.
-    try:
-        # Check for common logged-out indicators in the URL or page content
-        if "login" in driver.current_url.lower() or \
-           "i/flow/login" in driver.current_url.lower() or \
-           driver.is_element_present("text=Join today") or \
-           driver.is_element_present("text=Sign up now to get your own personalized timeline!"):
-            print("❌ Cookie login failed")
-            return None # Indicate failure
-        else:
-            print("✅ Cookie login successful")
-            return driver
-    except Exception as e:
-        print(f"❌ Login validation failed during element check: {e}")
+    # Simple login validation
+    current_url = driver.current_url.lower()
+
+    if "/login" in current_url or "flow" in current_url:
         print("❌ Cookie login failed")
         return None
 
-    # This line should ideally not be reached if the above logic is sound
+    print("✅ Cookie login successful")
     return driver
 # ===== Smooth Scrolling =====
 def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
