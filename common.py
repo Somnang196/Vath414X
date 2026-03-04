@@ -85,14 +85,13 @@ def setup(cookie_name):
     # Refresh or navigate to home to apply cookies
     driver.get("https://x.com/home")
     time.sleep(5) # Give the dashboard time to load
-
+    driver.save_screenshot("error_screenshot.png")
     # Simple login validation
     current_url = driver.current_url.lower()
 
     if "/login" in current_url or "flow" in current_url:
         print(f"❌ Cookie login failed. Current URL: {current_url}")
         # Save screenshot for GitHub Action artifacts
-        driver.save_screenshot("error_screenshot.png")
         return None
 
     print("✅ Cookie login successful")
