@@ -67,9 +67,10 @@ def setup(cookie_name):
         cookie["domain"] = ".x.com"
 
         try:
+            # Corrected f-string syntax: using single quotes for the inner string 'name'
             driver.add_cookie(cookie)
         except Exception as e:
-            print(f"Warning: Could not add cookie {cookie.get("name", "unknown")}: {e}")
+            print(f"Warning: Could not add cookie {cookie.get('name', 'unknown')}: {e}")
 
     # Step 4: Navigate to a known logged-in page to activate the session
     # Refreshing might not be enough; a direct navigation to a page that requires login
