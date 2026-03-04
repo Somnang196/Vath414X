@@ -22,13 +22,18 @@ def human_sleep(mode="short"):
 
 # ===== Setup Browser =====
 def setup(cookie_name):
-    """Create browser and load cookies correctly"""
+    """Create browser and load cookies correctly with Edge spoofing"""
 
-    driver = Driver(uc=True)
+    # 1. Add Edge User-Agent to match your cookie source
+    # This prevents X from flagging the session as a mismatch
+    edge_ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+    
+    # Initialize driver with UC mode and Edge User-Agent
+    driver = Driver(uc=True, agent=edge_ua)
 
-    # Open lightweight page first (less detection than homepage)
+    # Open a neutral page on the target domain first
     driver.get("https://x.com/robots.txt")
-    human_sleep("short")
+    time.sleep(2) 
 
     driver.delete_all_cookies()
 
@@ -46,39 +51,48 @@ def setup(cookie_name):
 
     for cookie in cookies:
         try:
+            # Build the base cookie dictionary
             clean_cookie = {
                 "name": cookie["name"],
                 "value": cookie["value"],
                 "domain": cookie.get("domain", ".x.com"),
                 "path": cookie.get("path", "/"),
+                "secure": cookie.get("secure", True) # Explicitly set security flag
             }
 
-            # Expiry handling
+            # Fix: Map 'no_restriction' (from your JSON) to 'None' (Selenium standard)
+            same_site = cookie.get("sameSite")
+            if isinstance(same_site, str):
+                ss_lower = same_site.lower()
+                if ss_lower == "no_restriction":
+                    clean_cookie["sameSite"] = "None"
+                elif ss_lower in ["strict", "lax"]:
+                    clean_cookie["sameSite"] = same_site.capitalize()
+
+            # Fix: Ensure expiry is a strictly formatted integer
             if "expirationDate" in cookie:
                 try:
-                    clean_cookie["expiry"] = int(cookie["expirationDate"])
-                except Exception:
+                    clean_cookie["expiry"] = int(float(cookie["expirationDate"]))
+                except (ValueError, TypeError):
                     pass
-
-            # Safe sameSite handling
-            same_site = cookie.get("sameSite")
-            if isinstance(same_site, str) and same_site.lower() in ["strict", "lax", "none"]:
-                clean_cookie["sameSite"] = same_site.capitalize()
 
             driver.add_cookie(clean_cookie)
 
         except Exception as e:
-            print(f"Warning: Could not add cookie {cookie.get('name')}: {e}")
+            # Silently fail on non-critical cookies like 'g_state'
+            pass
 
-    # Go to home page to activate session
+    # Refresh or navigate to home to apply cookies
     driver.get("https://x.com/home")
-    human_sleep("mid")
+    time.sleep(5) # Give the dashboard time to load
 
     # Simple login validation
     current_url = driver.current_url.lower()
 
     if "/login" in current_url or "flow" in current_url:
-        print("❌ Cookie login failed")
+        print(f"❌ Cookie login failed. Current URL: {current_url}")
+        # Save screenshot for GitHub Action artifacts
+        driver.save_screenshot("error_screenshot.png")
         return None
 
     print("✅ Cookie login successful")
