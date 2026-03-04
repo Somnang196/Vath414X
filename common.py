@@ -24,20 +24,20 @@ def human_sleep(mode="short"):
 def setup(cookie_name):
     """Create browser and load cookies correctly with Edge spoofing"""
 
+    # 1. Add Edge User-Agent to match your cookie source
+    # This prevents X from flagging the session as a mismatch
     edge_ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
     
-    driver = Driver(uc=True, agent=edge_ua, headless=False)
+    # Initialize driver with UC mode and Edge User-Agent
+    driver = Driver(uc=True, agent=edge_ua)
 
-    # Warm up: visit a neutral page first to establish session context
+    # Open a neutral page on the target domain first
     driver.get("https://x.com/robots.txt")
-    time.sleep(3)
+    time.sleep(2) 
 
     driver.delete_all_cookies()
 
-    # Support both flat path and private_data/ subfolder
-    cookies_file = f"{cookie_name}.json"
-    if not os.path.exists(cookies_file):
-        cookies_file = os.path.join("private_data", f"{cookie_name}.json")
+    cookies_file = os.path.join("private_data", f"{cookie_name}.json")
 
     try:
         with open(cookies_file, "r") as f:
@@ -49,17 +49,24 @@ def setup(cookie_name):
         print(f"Error: Invalid JSON in cookie file at {cookies_file}")
         return None
 
-    loaded = 0
+    # Remove legacy cookie that conflicts with modern auth and causes login failure
+    before = len(cookies)
+    cookies = [c for c in cookies if c["name"] != "_twitter_sess"]
+    if len(cookies) < before:
+        print("Removed _twitter_sess (legacy cookie that breaks login)")
+
     for cookie in cookies:
         try:
+            # Build the base cookie dictionary
             clean_cookie = {
                 "name": cookie["name"],
                 "value": cookie["value"],
                 "domain": cookie.get("domain", ".x.com"),
                 "path": cookie.get("path", "/"),
-                "secure": cookie.get("secure", True)
+                "secure": cookie.get("secure", True) # Explicitly set security flag
             }
 
+            # Fix: Map 'no_restriction' (from your JSON) to 'None' (Selenium standard)
             same_site = cookie.get("sameSite")
             if isinstance(same_site, str):
                 ss_lower = same_site.lower()
@@ -68,36 +75,29 @@ def setup(cookie_name):
                 elif ss_lower in ["strict", "lax"]:
                     clean_cookie["sameSite"] = same_site.capitalize()
 
+            # Fix: Ensure expiry is a strictly formatted integer
             if "expirationDate" in cookie:
                 try:
-                    expiry = int(float(cookie["expirationDate"]))
-                    # Skip already-expired cookies
-                    if expiry > int(time.time()):
-                        clean_cookie["expiry"] = expiry
+                    clean_cookie["expiry"] = int(float(cookie["expirationDate"]))
                 except (ValueError, TypeError):
                     pass
 
             driver.add_cookie(clean_cookie)
-            loaded += 1
 
         except Exception as e:
+            # Silently fail on non-critical cookies like 'g_state'
             pass
 
-    print(f"🍪 Loaded {loaded}/{len(cookies)} cookies")
-
-    # Navigate to home and wait longer for JS to settle
+    # Refresh or navigate to home to apply cookies
     driver.get("https://x.com/home")
-    time.sleep(8)
-
+    time.sleep(5) # Give the dashboard time to load
     driver.save_screenshot("error_screenshot.png")
-
+    # Simple login validation
     current_url = driver.current_url.lower()
-    print(f"📍 Current URL after login attempt: {current_url}")
 
     if "/login" in current_url or "flow" in current_url:
         print(f"❌ Cookie login failed. Current URL: {current_url}")
-        print("💡 Tip: Cookies may be expired or X.com blocked the session. Re-export fresh cookies.")
-        driver.quit()
+        # Save screenshot for GitHub Action artifacts
         return None
 
     print("✅ Cookie login successful")
@@ -314,11 +314,7 @@ def CommunityRetweet(account):
                 return random.choice(communities)
             return None
     return None
-def work(driver, account):
-    if driver is None:
-        print("❌ Driver is None — skipping work(). Cookie login likely failed.")
-        return
-
+def work(driver,account):
     if random.random() < 0.6:
         print("active session")
         scroll_times = random.randint(2, 7)
