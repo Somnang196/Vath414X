@@ -178,9 +178,7 @@ def retweet_to_community(driver, account):
                 driver.js_click(audience_btn) 
             else:
                 print("Audience dropdown already open, proceeding...")
-
-            driver.wait_for_text_visible("//div[text()='My Communities']", "My Communities", timeout=8)
-
+            human_sleep("short")
         except Exception as e:
             print(f"⚠️ Audience selector failed: {e}")
             driver.save_screenshot("audience_error.png")
