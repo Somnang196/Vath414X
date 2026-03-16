@@ -3,9 +3,6 @@ name: X4
 on:
   workflow_dispatch:
   schedule:
-    - cron: "9 3 * * *"
-    - cron: "41 7 * * *"
-    - cron: "17 11 * * *"
     - cron: "53 15 * * *"
     - cron: "24 19 * * *"
     - cron: "36 23 * * *"
@@ -28,7 +25,7 @@ jobs:
       - name: Checkout private repo (Cookies)
         uses: actions/checkout@v4
         with:
-          repository: vath414/cookies # <- replace yourusername with your GitHub username
+          repository: Somnang196/cookies # <- replace yourusername with your GitHub username
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: private_data # folder in workflow runner
 

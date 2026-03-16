@@ -4,10 +4,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "22 1 * * *"
-    - cron: "8 5 * * *"
-    - cron: "51 9 * * *"
-    - cron: "14 13 * * *"
-    - cron: "39 17 * * *"
     - cron: "5 21 * * *"
 permissions:
   contents: write
@@ -28,7 +24,7 @@ jobs:
       - name: Checkout private repo (Cookies)
         uses: actions/checkout@v4
         with:
-          repository: vath414/cookies # <- replace yourusername with your GitHub username
+          repository: Somnang196/cookies # <- replace yourusername with your GitHub username
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: private_data # folder in workflow runner
 
