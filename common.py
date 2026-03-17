@@ -32,7 +32,11 @@ def setup(cookie_name):
     driver = Driver(uc=True, agent=edge_ua)
 
     # Open a neutral page on the target domain first
-    driver.get("https://x.com/robots.txt")
+    try: 
+        driver.uc_open_with_reconnect("https://x.com/robots.txt", reconnect_time=5)
+        driver.uc_gui_click_captcha()
+    except Exception as e:
+        print(f"Not Found: Captacha")
     time.sleep(2) 
 
     driver.delete_all_cookies()
@@ -89,7 +93,11 @@ def setup(cookie_name):
             pass
 
     # Refresh or navigate to home to apply cookies
-    driver.get("https://x.com/home")
+    try:
+        driver.uc_open_with_reconnect("https://x.com/home", reconnect_time=5)
+        driver.uc_gui_click_captcha()
+    except Exception as e:
+        print(f" Not found: Captacha") 
     time.sleep(5) # Give the dashboard time to load
     driver.save_screenshot("error_screenshot.png")
     # Simple login validation
