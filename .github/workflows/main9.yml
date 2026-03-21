@@ -3,8 +3,7 @@ name: X9
 on:
   workflow_dispatch:
   schedule:
-    - cron: "42 7 * * *"
-    - cron: "42 19 * * *"
+    - cron: "0 2-23/4 * * *"
 permissions:
   contents: write
 
