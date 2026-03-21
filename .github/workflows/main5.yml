@@ -3,10 +3,8 @@ name: X5
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 0 * * *"
-    - cron: "9 4 * * *"
-    - cron: "41 8 * * *"
-    - cron: "52 20 * * *"
+    - cron: "24 4 * * *"
+    - cron: "24 16 * * *"
 permissions:
   contents: write
 
