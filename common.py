@@ -260,7 +260,7 @@ def retweet_to_community(driver, account):
                 timeout=10
             )
             print("✔ STEP 1 PASSED")
-
+            dismiss_modal_if_present(driver)
             print("STEP 2: Clicking textarea...")
             driver.click('[data-testid^="tweetTextarea"]')
             print("✔ STEP 2 PASSED")
@@ -327,6 +327,14 @@ def CommunityRetweet(account):
                 return random.choice(communities)
             return None
     return None
+def dismiss_modal_if_present(driver):
+    try:
+        if driver.is_element_visible("span:contains('Got it')"):
+            driver.click("span:contains('Got it')")
+            driver.sleep(1)  # wait for modal to fully close
+            print("Modal dismissed!")
+    except Exception:
+        pass
 def work(driver,account):
     if driver is None:
         print("❌ Driver is None — skipping work(). Cookie login likely failed.")
