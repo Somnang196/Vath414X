@@ -144,7 +144,7 @@ def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
 
 def GotoProfile(driver):
     try:
-        driver.get("https://x.com/Dirtymom32")
+        driver.get("https://x.com/swapfamily7857")
         print("✅ Navigated to profile")
         human_sleep("mid")
         smooth_scroll(driver, duration=30)
