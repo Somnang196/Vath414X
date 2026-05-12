@@ -1,6 +1,5 @@
-from common import setup,smooth_scroll,post
+from common import setup,smooth_scroll,work
 if __name__ == "__main__":
     driver=setup("cookie6")
-    smooth_scroll(driver)
-#MiaKhalifa6863
+    work(driver, "MiaKhalifa6863")
 
