@@ -3,7 +3,7 @@ name: X2
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 */4 * * *"
+    - cron: "0 3 * * *"
 permissions:
   contents: write
 
