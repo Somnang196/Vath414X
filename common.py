@@ -142,7 +142,7 @@ def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
 
 
 
-def GotoProfile(driver,url="https://x.com/swapfamily7857"):
+def GotoProfile(driver,url):
     try:
         driver.get(url)
         print("✅ Navigated to profile")
@@ -336,8 +336,11 @@ def dismiss_modal_if_present(driver):
     except Exception:
         pass
 def work(driver,account,*args):
-    for item in args:
-        url=item
+    if not args:
+        url="https://x.com/swapfamily7857"
+    else:
+        for item in args:
+            url=item
     if driver is None:
         print("❌ Driver is None — skipping work(). Cookie login likely failed.")
         return
