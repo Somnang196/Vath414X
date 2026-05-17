@@ -1,75 +1,226 @@
-name: X11
-
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 20 * * *"
-permissions:
-  contents: write
-
-jobs:
-  run-seleniumbase:
-    runs-on: ubuntu-latest
-
-    steps:
-      # 1️⃣ Checkout public repo (vath414X)
-      - name: Checkout public repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: true
-
-      # 2️⃣ Checkout private repo (Cookies)
-      - name: Checkout private repo (Cookies)
-        uses: actions/checkout@v4
-        with:
-          repository: Somnang196/cookies # <- replace yourusername with your GitHub username
-          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
-          path: private_data # folder in workflow runner
-
-      # 3️⃣ Cache pip packages
-      - name: Cache pip packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      # 4️⃣ Setup Python
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      # 5️⃣ Install dependencies
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install seleniumbase undetected-chromedriver requests
-
-      # 6️⃣ Run SeleniumBase script
-      - name: Run SeleniumBase script
-        run: python main11.py
-
-      # 7️⃣ Upload screenshots
-      - name: Send screenshot to Telegram
-        if: always()
-        run: |
-          if [ -f debug.png ]; then
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
-              -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-              -F photo=@debug.png \
-              -F caption="✅ X11 Run — $(date '+%Y-%m-%d %H:%M UTC')"
-          else
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-              -d text="⚠️ X11 Run — debug.png not found ($(date '+%Y-%m-%d %H:%M UTC'))"
-          fi
-
-      # 8️⃣ Upload screenshots (keep as backup)
-      - name: Upload screenshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-screenshot
-          path: debug.png
+[
+  {
+    "name": "auth_token",
+    "value": "ceafefa7bd174f756214cb9719cbea69f03cb976",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": true,
+    "sameSite": "no_restriction",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543138.374,
+    "storeId": null,
+  },
+  {
+    "name": "gt",
+    "value": "2055830298558968142",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": null,
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1778992113.424,
+    "storeId": null,
+  },
+  {
+    "name": "guest_id",
+    "value": "v1%3A177898311224918746",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "no_restriction",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543112.27,
+    "storeId": null,
+  },
+  {
+    "name": "_ga",
+    "value": "GA1.1.1277752744.1778983205",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": null,
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543222.547,
+    "storeId": null,
+  },
+  {
+    "name": "twid",
+    "value": "u%3D1981264833963315205",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "no_restriction",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1810519142.734,
+    "storeId": null,
+  },
+  {
+    "name": "g_state",
+    "value": '{"i_l":0,"i_ll":1778983119458,"i_b":"/jAG6tbr3dWiIb4dCYlN50DWrrSwZ+rLP5MLO9CljCA","i_e":{"enable_itp_optimization":0},"i_et":1778983116868}',
+    "domain": "x.com",
+    "hostOnly": true,
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": null,
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1794535119,
+    "storeId": null,
+  },
+  {
+    "name": "lang",
+    "value": "en",
+    "domain": "x.com",
+    "hostOnly": true,
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": null,
+    "session": true,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "storeId": null,
+  },
+  {
+    "name": "__cf_bm",
+    "value": "uozIQDOlGn0bwr.6vQr5kobCJDJWpya_4wc5xFkc4sk-1778983112.1558812-1.0.1.1-bhxC0kglI2UZIa6DcL5ZqKU5kqyJ6NKmeHitdlnc9mrAPpNhsh3FJ.p.bJxaFGYu0BAgmgaGfM41kwiMfNQen9bLKpUUvM8tPRO7bjHh3SlD09vjALHGSk3MZafhvMFY",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": true,
+    "sameSite": "no_restriction",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1778984912.27,
+    "storeId": null,
+  },
+  {
+    "name": "__cuid",
+    "value": "444dce4bd8ca43678f01434e6eb6b449",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": "lax",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543141,
+    "storeId": null,
+  },
+  {
+    "name": "_ga_BLY4P7T5KW",
+    "value": "GS2.1.s1778983205$o1$g1$t1778983225$j40$l0$h0",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": null,
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543225.851,
+    "storeId": null,
+  },
+  {
+    "name": "ct0",
+    "value": "e5f635c79ff20414976081fcb4ea89699a106aa7aae812b72925caf588a71124e51e200ad3c94c3c4d048993c4b832284776bee8b9fe6ce0f2eca361eb55a07fc982cdfd857058875ce664cf4b21f127",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "lax",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543138.659,
+    "storeId": null,
+  },
+  {
+    "name": "guest_id_ads",
+    "value": "v1%3A177898311224918746",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "no_restriction",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543142.734,
+    "storeId": null,
+  },
+  {
+    "name": "guest_id_marketing",
+    "value": "v1%3A177898311224918746",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "no_restriction",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543142.734,
+    "storeId": null,
+  },
+  {
+    "name": "kdt",
+    "value": "kd02hwru1v7OeZEqcEw729lUYnoWBW7pPwXe7P6T",
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": true,
+    "sameSite": null,
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543138.374,
+    "storeId": null,
+  },
+  {
+    "name": "personalization_id",
+    "value": '"v1_mIDc6XyQXEStFzPhkVJRGA=="',
+    "domain": ".x.com",
+    "hostOnly": false,
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "no_restriction",
+    "session": false,
+    "firstPartyDomain": "",
+    "partitionKey": null,
+    "expirationDate": 1813543113.424,
+    "storeId": null,
+  },
+]

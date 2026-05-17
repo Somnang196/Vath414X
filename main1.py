@@ -1,9 +1,10 @@
-from common import setup,work
+from common import setup,work,smooth_scroll
 import random, time
 
 if __name__ == "__main__":
     print("✅ Running session")
-    driver = setup("cookie1")
-    work(driver,"DarkHourX7443")
+    driver = setup("cokie1")
+    smooth_scroll(driver)
+    # work(driver,"DarkHoourX7443")
     
 #https://x.com/DarkHourX7443

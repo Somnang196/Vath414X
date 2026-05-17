@@ -1,8 +1,9 @@
-from common import  setup,work
+from common import  setup,work,smooth_scroll
 import random, time
 
 if __name__ == "__main__":
   # Only setup driver if selected
     driver = setup("cookie11")
-    work(driver,"AvaAdam136653")
+    smooth_scroll(driver)
+    # work(driver,"AvaAdam136653")
 #https://x.com/AvaAdam136653
