@@ -139,8 +139,8 @@ def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
         if random.random() < 0.03:
             break
     print("🎯 Done scrolling.")
-
-
+    driver.save_screenshot("debug.png")
+    driver.quit()
 
 def GotoProfile(driver,url):
     try:
