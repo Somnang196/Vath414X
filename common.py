@@ -111,7 +111,14 @@ def setup(cookie_name):
     print("✅ Cookie login successful")
     return driver
 # ===== Smooth Scrolling =====
-def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
+
+def smooth_scroll(driver):
+    scroll_times = random.randint(2, 7)
+    for _ in range(scroll_times):
+        scroll(driver)
+        time.sleep(random.uniform(1.2, 4.5))
+
+def scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
     print("🌀 Scrolling...")
 
     # randomize total scroll duration per call
@@ -142,7 +149,6 @@ def smooth_scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
     screenshot_path = os.path.join(os.environ.get("GITHUB_WORKSPACE", "."), "debug.png")
     driver.save_screenshot(screenshot_path)
     print(f"📸 Screenshot saved to: {screenshot_path}")
-    driver.quit()
 
 def GotoProfile(driver,url):
     try:
@@ -348,12 +354,7 @@ def work(driver,account,*args):
         return
     if random.random() < 0.9:
         print("active session")
-        scroll_times = random.randint(2, 7)
-
-        for _ in range(scroll_times):
-            smooth_scroll(driver)
-            time.sleep(random.uniform(1.2, 4.5))
-
+        smooth_scroll(driver)
         if random.random() < 0.8:
             GotoProfile(driver,url)
             time.sleep(random.uniform(2, 5))
