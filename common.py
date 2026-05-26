@@ -117,7 +117,9 @@ def smooth_scroll(driver):
     for _ in range(scroll_times):
         scroll(driver)
         time.sleep(random.uniform(1.2, 4.5))
-
+    screenshot_path = os.path.join(os.environ.get("GITHUB_WORKSPACE", "."), "debug.png")
+    driver.save_screenshot(screenshot_path)
+    print(f"📸 Screenshot saved to: {screenshot_path}")
 def scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
     print("🌀 Scrolling...")
 
@@ -146,16 +148,13 @@ def scroll(driver, duration=RUN_TIME, step=SCROLL_SPEED):
         if random.random() < 0.03:
             break
     print("🎯 Done scrolling.")
-    screenshot_path = os.path.join(os.environ.get("GITHUB_WORKSPACE", "."), "debug.png")
-    driver.save_screenshot(screenshot_path)
-    print(f"📸 Screenshot saved to: {screenshot_path}")
 
 def GotoProfile(driver,url):
     try:
         driver.get(url)
         print("✅ Navigated to profile")
         human_sleep("mid")
-        smooth_scroll(driver, duration=30)
+        smooth_scroll(driver)
         human_sleep("tiny")
         driver.execute_script("window.scrollTo(0, 0);")
         human_sleep("short")
