@@ -3,7 +3,7 @@ import random, time
 
 if __name__ == "__main__":
     print("✅ Running session")
-    driver = setup("cokie1")
+    driver = setup("cookie1")
     smooth_scroll(driver)
     # work(driver,"DarkHoourX7443")
     
