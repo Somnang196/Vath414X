@@ -351,7 +351,7 @@ def work(driver,account,*args):
     if driver is None:
         print("❌ Driver is None — skipping work(). Cookie login likely failed.")
         return
-    if random.random() < 0.9:
+    if random.random() < 0.7:
         print("active session")
         smooth_scroll(driver)
         if random.random() < 0.8:
