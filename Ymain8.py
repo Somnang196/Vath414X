@@ -3,8 +3,8 @@ import random, time
 
 if __name__ == "__main__":
     print("✅ Running session")
-    driver = setup("MoniSanto143")
+    driver = setup("MichGunad589")
     # smooth_scroll(driver)
-    work(driver,"MoniSanto143","https://x.com/Viviwie6c")
+    work(driver,"MichGunad589","https://x.com/Viviwie6c")
     
-#https://x.com/MoniSanto143
+#https://x.com/MichGunad589
