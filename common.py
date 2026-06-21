@@ -351,10 +351,10 @@ def work(driver,account,*args):
     if driver is None:
         print("❌ Driver is None — skipping work(). Cookie login likely failed.")
         return
-    if random.random() < 0.7:
+    if random.random() < 0.9:
         print("active session")
         smooth_scroll(driver)
-        if random.random() < 0.8:
+        if random.random() < 0.9:
             GotoProfile(driver,url)
             time.sleep(random.uniform(2, 5))
             retweet_to_community(driver,account)
