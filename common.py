@@ -361,7 +361,7 @@ def work(driver,account,*args):
     else:
         # Passive session
         print("passive session")
-        scroll_times = random.randint(5, 12)
+        scroll_times = random.randint(3,5)
         for _ in range(scroll_times):
             smooth_scroll(driver)
             time.sleep(random.uniform(1.5, 5))
